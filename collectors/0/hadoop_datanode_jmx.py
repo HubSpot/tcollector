@@ -22,10 +22,11 @@ import time
 # If this user doesn't exist, we'll exit immediately.
 # If we're running as root, we'll drop privileges using this user.
 USER = os.environ.get("HDFS_USER", "hadoop")
+JAVA_HOME = os.environ.get("JAVA_HOME", "/usr/lib/jvm/java-1.6.0-openjdk-1.6.0.0.x86_64")
 
 # We add those files to the classpath if they exist.
 CLASSPATH = [
-    "%s/lib/tools.jar" % os.environ.get("JAVA_HOME", "/usr/lib/jvm/java-1.6.0-openjdk-1.6.0.0.x86_64"),
+    "%s/lib/tools.jar" % JAVA_HOME,
 ]
 
 # Map certain JVM stats so they are unique and shorter
