@@ -23,11 +23,12 @@ import utils
 
 # If this user doesn't exist, we'll exit immediately.
 # If we're running as root, we'll drop privileges using this user.
-USER = "hadoop"
+USER = os.environ.get("HBASE_USER", "hadoop")
+JAVA_HOME = os.environ.get("JAVA_HOME", "/usr/lib/jvm/java-6-sun")
 
 # We add those files to the classpath if they exist.
 CLASSPATH = [
-    "/usr/lib/jvm/java-1.6.0-openjdk-1.6.0.0.x86_64/lib/tools.jar",
+    "%s/lib/tools.jar" % JAVA_HOME,
 ]
 
 # We shorten certain strings to avoid excessively long metric names.
@@ -79,11 +80,11 @@ def main(argv):
     classpath = ":".join(classpath)
 
     jmx = subprocess.Popen(
-        ["java", "-enableassertions", "-enablesystemassertions",  # safe++
+        ["%s/java" % JAVA_HOME, "-enableassertions", "-enablesystemassertions",  # safe++
          "-Xmx64m",  # Low RAM limit, to avoid stealing too much from prod.
          "-cp", classpath, "com.stumbleupon.monitoring.jmx",
          "--watch", "10", "--long", "--timestamp",
-         "HMaster",  # Name of the process.
+         "RegionServer",  # Name of the process.
          # The remaining arguments are pairs (mbean_regexp, attr_regexp).
          # The first regexp is used to match one or more MBeans, the 2nd
          # to match one or more attributes of the MBeans matched.
