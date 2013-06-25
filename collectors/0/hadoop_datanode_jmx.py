@@ -103,6 +103,7 @@ def main(argv):
          # The first regexp is used to match one or more MBeans, the 2nd
          # to match one or more attributes of the MBeans matched.
          "hadoop", "",                     # All HBase / hadoop metrics.
+         "^Hadoop", "",                    # ...
          "Threading", "Count|Time$",       # Number of threads and CPU time.
          "OperatingSystem", "OpenFile",    # Number of open files.
          "GarbageCollector", "Collection", # GC runs and time spent GCing.
@@ -165,6 +166,7 @@ def main(argv):
             # mbean is of the form "domain:key=value,...,foo=bar"
             # some tags can have spaces, so we need to fix that.
             mbean_domain, mbean_properties = mbean.rstrip().replace(" ", "_").split(":", 1)
+            mbean_domain = mbean_domain.lower()
             if mbean_domain not in ("hadoop", "java.lang"):
                 print >>sys.stderr, ("Unexpected mbean domain = %r on line %r"
                                      % (mbean_domain, line))
