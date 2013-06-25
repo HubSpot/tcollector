@@ -40,7 +40,7 @@ def is_numeric(obj):
 def format_tsd_key(metric_key, metric_value, tags=[]):
     """ Formats a key for OpenTSDB """
     expanded_tags = ''.join([' %s=%s' % (key, value) for key, value in tags.iteritems()])
-    output = '{} {} {}{}'.format(metric_key, TIME, metric_value, expanded_tags)
+    output = '{0} {1} {2}{3}'.format(metric_key, TIME, metric_value, expanded_tags)
     return output
 
 
@@ -51,7 +51,7 @@ def main():
     try:
         json = get_json(URL)
     except Exception, e:
-        print 'Exception processing JSON: {}'.format(e)
+        print 'Exception processing JSON: {0}'.format(e)
         sys.exit(1)
     for regionserver in json:
         tags = {}

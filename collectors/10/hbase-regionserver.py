@@ -35,10 +35,10 @@ BLOCK_TYPE_PREFIX = 'bt\.'
 REGION_PREFIX = 'region\.'
 # Regular Expressions for use in Filters
 FILTER_TAGS = {
-    'table': '{}([a-zA-Z_0-9\-]+).'.format(TABLE_PREFIX),
-    'columnfamily': '{}([a-zA-Z_0-9]+).'.format(CF_PREFIX),
-    'blocktype': '{}([a-zA-Z_0-9]+).'.format(BLOCK_TYPE_PREFIX),
-    'region': '{}([a-zA-Z_0-9]+).'.format(REGION_PREFIX)
+    'table': '{0}([a-zA-Z_0-9\-]+).'.format(TABLE_PREFIX),
+    'columnfamily': '{0}([a-zA-Z_0-9]+).'.format(CF_PREFIX),
+    'blocktype': '{0}([a-zA-Z_0-9]+).'.format(BLOCK_TYPE_PREFIX),
+    'region': '{0}([a-zA-Z_0-9]+).'.format(REGION_PREFIX)
 }
 # Special Case - dict() starts with Prefix
 FILTER_OPERATIONS = {
@@ -83,7 +83,7 @@ def is_numeric(obj):
 def format_tsd_key(metric_key, metric_value, tags=[]):
     """ Formats a key for OpenTSDB """
     expanded_tags = ''.join([' %s=%s' % (key, value) for key, value in tags.iteritems()])
-    output = '{} {} {}{}'.format(metric_key, TIME, metric_value, expanded_tags)
+    output = '{0} {1} {2}{3}'.format(metric_key, TIME, metric_value, expanded_tags)
     return output
 
 
@@ -138,7 +138,7 @@ def extract_replication_peers(string, tags, bean):
 
 
 def extract_garbage_collectors(string, tags, bean):
-    """ Iterate over each Bean. 
+    """ Iterate over each Bean.
     Look at the name, and create metrics
     for each Garbage Collector. """
     metric_string = string
