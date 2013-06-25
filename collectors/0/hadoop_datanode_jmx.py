@@ -94,7 +94,7 @@ def main(argv):
     classpath = ":".join(classpath)
 
     jmx = subprocess.Popen(
-        ["%s/java" % JAVA_HOME, "-enableassertions", "-enablesystemassertions",  # safe++
+        ["java", "-enableassertions", "-enablesystemassertions",  # safe++
          "-Xmx64m",  # Low RAM limit, to avoid stealing too much from prod.
          "-cp", classpath, "com.stumbleupon.monitoring.jmx",
          "--watch", "10", "--long", "--timestamp",
