@@ -21,11 +21,11 @@ import time
 
 # If this user doesn't exist, we'll exit immediately.
 # If we're running as root, we'll drop privileges using this user.
-USER = "hadoop"
+USER = os.environ.get("HDFS_USER", "hadoop")
 
 # We add those files to the classpath if they exist.
 CLASSPATH = [
-    "/usr/lib/jvm/java-6-sun/lib/tools.jar",
+    "%s/lib/tools.jar" % os.environ.get("JAVA_HOME", "/usr/lib/jvm/java-1.6.0-openjdk-1.6.0.0.x86_64"),
 ]
 
 # Map certain JVM stats so they are unique and shorter
@@ -93,7 +93,7 @@ def main(argv):
     classpath = ":".join(classpath)
 
     jmx = subprocess.Popen(
-        ["java", "-enableassertions", "-enablesystemassertions",  # safe++
+        ["%s/java" % JAVA_HOME, "-enableassertions", "-enablesystemassertions",  # safe++
          "-Xmx64m",  # Low RAM limit, to avoid stealing too much from prod.
          "-cp", classpath, "com.stumbleupon.monitoring.jmx",
          "--watch", "10", "--long", "--timestamp",
