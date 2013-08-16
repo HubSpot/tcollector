@@ -12,7 +12,7 @@
 # see <http://www.gnu.org/licenses/>.
 
 PACKAGE_VERSION := 1.0.1
-RPM_REVISION := 5nojmx
+RPM_REVISION := 5hs1nojmx
 # Where do we install our files.
 tcollectordir := /usr/local/tcollector
 
