@@ -2,6 +2,7 @@
 #
 # Written by Jeremy Carroll <jeremy@pinterest.com>.
 #
+import re
 import time
 import sys
 import urllib2
@@ -20,7 +21,7 @@ def get_json(uri):
     """ Request URL, load JSON, exit if error. """
     request = urllib2.Request(uri, headers={'Accept': 'application/json'})
     r = urllib2.urlopen(request, timeout=TIMEOUT)
-    json_response = json.load(r)
+    json_response = json.load(re.sub("]},\"Node\"", "]}},{\"Node\"", r.read())
     if 'LiveNodes' in json_response:
         return json_response['LiveNodes']
     raise Exception, 'LiveNodes does not exist in JSON response'
