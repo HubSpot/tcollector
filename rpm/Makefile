@@ -37,6 +37,7 @@ FILES := \
 	collectors/0/procnettcp.py	\
 	collectors/0/procstats.py	\
 	collectors/0/smart-stats.py	\
+    collectors/10/hbase-rest.py \
 	collectors/disabled/hadoop_datanode_jmx.py \
 	collectors/disabled/hbase_regionserver_jmx.py \
 	collectors/__init__.py	\
