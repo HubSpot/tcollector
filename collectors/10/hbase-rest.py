@@ -84,8 +84,8 @@ def main():
                     if table and region and DOUBLE_WRITE:
                         #_ Double write a more specific metric for speed optimization
                         metrics.append(format_tsd_key('.'.join([METRIC_PREFIX, table, region, metric_string]), metric_value, tags={'server': tags['server']}))
-    for tsd in metrics:
-        print tsd
+
+    print '\n'.join(metrics)
 
 
 if __name__ == '__main__':

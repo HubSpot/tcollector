@@ -145,10 +145,31 @@ class Collector(object):
         # out a bunch of data points at one time and we get some weird sized
         # chunk.  This read call is non-blocking.
         try:
-            self.buffer += self.proc.stdout.read()
-            if len(self.buffer):
-                LOG.debug('reading %s, buffer now %d bytes',
-                          self.name, len(self.buffer))
+            count = 0
+            while True:
+                line = self.proc.stdout.readline()
+
+                # recover any buffer we saved
+                if self.buffer:
+                    line = self.buffer + line
+                    self.buffer = None
+
+                if not line.endswith("\n"):
+                    # partial line or EOF.  get the rest and add to buffer
+                    # this should be two empty strings (noop) or a partial line and empty
+                    self.buffer = line + self.proc.stdout.read()
+                    break
+
+                self.datalines.append(line.strip())
+
+                if self.name == "hbase-rest.py":
+                    count += 1
+                    if count % 1000 == 0:
+                        LOG.debug("read %d lines so far" % count)
+
+            if len(self.datalines):
+                LOG.debug('reading %s, found %d lines. %d left over bytes',
+                          self.name, len(self.datalines), len(self.buffer))
         except IOError, (err, msg):
             if err != errno.EAGAIN:
                 raise
@@ -157,18 +178,6 @@ class Collector(object):
             # have it anymore, so log an error and bail
             LOG.exception('uncaught exception in stdout read')
             return
-
-        # iterate for each line we have
-        while self.buffer:
-            idx = self.buffer.find('\n')
-            if idx == -1:
-                break
-
-            # one full line is now found and we can pull it out of the buffer
-            line = self.buffer[0:idx].strip()
-            if line:
-                self.datalines.append(line)
-            self.buffer = self.buffer[idx+1:]
 
     def collect(self):
         """Reads input from the collector and returns the lines up to whomever
@@ -602,7 +611,7 @@ class SenderThread(threading.Thread):
             for family, socktype, proto, canonname, sockaddr in addresses:
                 try:
                     self.tsd = socket.socket(family, socktype, proto)
-                    self.tsd.settimeout(15)
+                    self.tsd.settimeout(30)
                     self.tsd.connect(sockaddr)
                     # if we get here it connected
                     break
@@ -625,6 +634,7 @@ class SenderThread(threading.Thread):
             out += line + '\n'
             LOG.debug('SENDING: %s', line)
 
+        LOG.debug("WILL SEND %d LINES IN ONE BATCH" % len(self.sendq))
         if not out:
             LOG.debug('send_data no data?')
             return
